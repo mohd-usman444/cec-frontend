@@ -21,14 +21,17 @@ import {
 import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
+import useAuthStore from '../store/authStore';
 
 const GetAndPay = () => {
   const { payments, fetchPayments, addPayment, updatePayment, deletePayment, isLoading, getStats } = usePaymentStore();
+  const { user } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [dateFocus, setDateFocus] = useState(false);
+  const isEmployee = user?.role === 'employee';
 
   // Form state
   const [formData, setFormData] = useState({
@@ -179,16 +182,16 @@ const GetAndPay = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
         <div>
-          <h1 className="text-3xl font-heading font-bold text-white tracking-wide flex items-center gap-3">
-            <Wallet className="h-8 w-8 text-gold-500" />
-            Get & Pay <span className="text-gray-500 font-normal text-xl">| Global Ledger</span>
+          <h1 className="text-2xl md:text-3xl font-heading font-bold text-white tracking-wide flex items-center gap-3">
+            <Wallet className="h-7 w-7 md:h-8 md:w-8 text-gold-500" />
+            Get & Pay <span className="hidden sm:inline text-gray-500 font-normal text-xl">| Global Ledger</span>
           </h1>
-          <p className="text-gray-400 mt-1">Manage all your incoming and outgoing payments in one place.</p>
+          <p className="text-gray-400 mt-1 text-sm md:text-base">Manage all your incoming and outgoing payments.</p>
         </div>
-        <div className="flex gap-2">
-          <div className="flex gap-2 mr-2">
+        <div className="flex items-center gap-3">
+          <div className="flex gap-2">
             <button onClick={exportToCSV} className="p-2.5 bg-navy-800 hover:bg-navy-700 rounded-lg text-gray-300 transition-colors border border-navy-700" title="Export to Excel">
               <Download className="h-5 w-5" />
             </button>
@@ -196,18 +199,20 @@ const GetAndPay = () => {
               <FileText className="h-5 w-5" />
             </button>
           </div>
-          <button
-            onClick={() => handleOpenModal()}
-            className="btn-primary flex items-center gap-2 w-fit"
-          >
-            <Plus className="h-5 w-5" /> New Transaction
-          </button>
+          {!isEmployee && (
+            <button
+              onClick={() => handleOpenModal()}
+              className="btn-primary flex items-center gap-2 flex-1 md:flex-none justify-center whitespace-nowrap"
+            >
+              <Plus className="h-5 w-5" /> <span className="hidden xs:inline">New Transaction</span><span className="xs:hidden">Add</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="card border-l-4 border-l-green-500 bg-navy-800/40 relative overflow-hidden group">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <div className="card border-l-4 border-l-green-500 bg-navy-800/40 relative overflow-hidden group p-4 md:p-6">
           <div className="absolute right-[-10px] top-[-10px] opacity-10 group-hover:scale-110 transition-transform">
             <TrendingUp className="h-24 w-24 text-green-500" />
           </div>
@@ -287,7 +292,7 @@ const GetAndPay = () => {
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4 text-right">Amount</th>
                 <th className="px-6 py-4">Type & Mode</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+                {!isEmployee && <th className="px-6 py-4 text-center">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-navy-700/50">
@@ -336,22 +341,24 @@ const GetAndPay = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => handleOpenModal(p)}
-                          className="p-1.5 text-gray-400 hover:text-gold-500 hover:bg-navy-700 rounded transition-all"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p._id)}
-                          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-navy-700 rounded transition-all"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+                    {!isEmployee && (
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleOpenModal(p)}
+                            className="p-1.5 text-gray-400 hover:text-gold-500 hover:bg-navy-700 rounded transition-all"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p._id)}
+                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-navy-700 rounded transition-all"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -360,8 +367,8 @@ const GetAndPay = () => {
         </div>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
+      {/* Modal - Only for Admin/Contractor */}
+      {isModalOpen && !isEmployee && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="relative w-full max-w-lg bg-navy-900 rounded-2xl border border-navy-700 shadow-2xl shadow-black/50 p-6 md:p-8">
             <button

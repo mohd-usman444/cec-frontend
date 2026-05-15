@@ -6,7 +6,8 @@ import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
-const SupplierModule = ({ siteId, isCompleted }) => {
+const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
+  const canEdit = !isCompleted && !isReadOnly;
   const { suppliers, fetchSuppliers, addSupplier, updateSupplier, deleteSupplier, isLoading } = useSupplierStore();
   const { addPayment } = usePaymentStore();
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -255,6 +256,13 @@ const SupplierModule = ({ siteId, isCompleted }) => {
         </div>
       )}
 
+      {isReadOnly && !isCompleted && (
+        <div className="mb-6 p-3 bg-gold-500/10 border border-gold-500/20 rounded-lg flex items-center gap-3 text-gold-500">
+          <FileText className="h-5 w-5" />
+          <p className="text-sm font-medium">You have view-only access. Contact your admin for modifications.</p>
+        </div>
+      )}
+
       {!isFormOpen ? (
         <div className="space-y-6">
           {/* Filter & Quick Pay Header */}
@@ -272,7 +280,7 @@ const SupplierModule = ({ siteId, isCompleted }) => {
               </select>
             </div>
 
-            {selectedSupplier !== 'All' && selectedSupplierSummary?.due > 0 ? (
+            {selectedSupplier !== 'All' && selectedSupplierSummary?.due > 0 && canEdit ? (
               <div className="md:col-span-5 flex items-end gap-2 border-l border-navy-700 pl-4">
                 <div className="flex-1">
                   <label className="block text-[10px] uppercase tracking-widest text-gold-500 font-bold mb-2">Quick Pay towards Due</label>
@@ -296,7 +304,7 @@ const SupplierModule = ({ siteId, isCompleted }) => {
             )}
 
             <div className="md:col-span-3 flex justify-end">
-              {!isCompleted && (
+              {canEdit && (
                 <button onClick={() => setIsFormOpen(true)} className="btn-secondary h-10 w-full flex items-center justify-center">
                   <Plus className="mr-2 h-4 w-4" /> Log Purchase
                 </button>
@@ -431,7 +439,7 @@ const SupplierModule = ({ siteId, isCompleted }) => {
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                    {!isCompleted ? (
+                    {canEdit ? (
                       <div className="flex justify-end gap-3">
                         <button onClick={() => handleEdit(supplier)} className="text-blue-400 hover:text-blue-300 transition-colors">
                           <Edit className="h-4 w-4" />
@@ -441,7 +449,7 @@ const SupplierModule = ({ siteId, isCompleted }) => {
                         </button>
                       </div>
                     ) : (
-                      <span className="text-gray-500 italic">Locked</span>
+                      <span className="text-gray-500 italic">{isReadOnly ? 'View Only' : 'Locked'}</span>
                     )}
                   </td>
                 </tr>

@@ -61,7 +61,7 @@ const EmployeeAuth = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row bg-black overflow-hidden">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col md:flex-row bg-black overflow-hidden">
       {/* Left Side: Logo Branding */}
       <div className="hidden md:flex md:w-1/2 items-center justify-center bg-navy-950 border-r border-navy-800 relative overflow-hidden p-12">
         <div className="absolute inset-0 opacity-10 bg-center bg-no-repeat" style={{ backgroundImage: `url(${logo})`, backgroundSize: '150%' }}></div>

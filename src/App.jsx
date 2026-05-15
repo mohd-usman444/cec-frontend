@@ -13,6 +13,10 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import SiteDetail from './pages/SiteDetail';
 import GetAndPay from './pages/GetAndPay';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+
+import EmployeeAuth from './pages/EmployeeAuth';
 
 function App() {
   const { checkAuth } = useAuthStore();
@@ -30,6 +34,9 @@ function App() {
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/employee-auth" element={<EmployeeAuth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
             {/* Protected Routes */}
             <Route

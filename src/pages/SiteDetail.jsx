@@ -7,11 +7,14 @@ import WorkerReport from '../components/WorkerReport';
 import SupplierReport from '../components/SupplierReport';
 import { ArrowLeft, Building2, MapPin, Calendar as CalendarIcon, FileText, CheckCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import useAuthStore from '../store/authStore';
 
 const SiteDetail = () => {
   const { slug } = useParams();
   const { currentSite, getSiteDetails, updateSite, isLoading } = useSiteStore();
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('worker-spend');
+  const isEmployee = user?.role === 'employee';
 
   useEffect(() => {
     getSiteDetails(slug);
@@ -87,25 +90,27 @@ const SiteDetail = () => {
               </div>
             )}
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleToggleStatus}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg ${currentSite.status === 'completed'
-                ? 'bg-navy-800 text-gold-500 border border-gold-500/30 hover:bg-navy-700'
-                : 'bg-gold-500 text-navy-900 hover:bg-gold-400'
-                }`}
-            >
-              {currentSite.status === 'completed' ? (
-                <>
-                  <Clock className="h-4 w-4" /> Reactivate Site
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="h-4 w-4" /> Mark as Completed
-                </>
-              )}
-            </button>
-          </div>
+          {!isEmployee && (
+            <div className="flex gap-2">
+              <button
+                onClick={handleToggleStatus}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg ${currentSite.status === 'completed'
+                  ? 'bg-navy-800 text-gold-500 border border-gold-500/30 hover:bg-navy-700'
+                  : 'bg-gold-500 text-navy-900 hover:bg-gold-400'
+                  }`}
+              >
+                {currentSite.status === 'completed' ? (
+                  <>
+                    <Clock className="h-4 w-4" /> Reactivate Site
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" /> Mark as Completed
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -130,11 +135,11 @@ const SiteDetail = () => {
       {/* Tab Content */}
       <div className="min-h-[400px]">
         {activeTab === 'worker-spend' && (
-          <WorkerModule siteId={currentSite._id} isCompleted={currentSite.status === 'completed'} />
+          <WorkerModule siteId={currentSite._id} isCompleted={currentSite.status === 'completed'} isReadOnly={isEmployee} />
         )}
 
         {activeTab === 'supplier' && (
-          <SupplierModule siteId={currentSite._id} isCompleted={currentSite.status === 'completed'} />
+          <SupplierModule siteId={currentSite._id} isCompleted={currentSite.status === 'completed'} isReadOnly={isEmployee} />
         )}
 
         {activeTab === 'worker-report' && (

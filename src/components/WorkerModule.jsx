@@ -5,7 +5,8 @@ import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
-const WorkerModule = ({ siteId, isCompleted }) => {
+const WorkerModule = ({ siteId, isCompleted, isReadOnly }) => {
+  const canEdit = !isCompleted && !isReadOnly;
   const { workers, fetchWorkers, addWorker, updateWorker, deleteWorker, isLoading } = useWorkerStore();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -180,14 +181,21 @@ const WorkerModule = ({ siteId, isCompleted }) => {
         </div>
       )}
 
+      {isReadOnly && !isCompleted && (
+        <div className="mb-6 p-3 bg-gold-500/10 border border-gold-500/20 rounded-lg flex items-center gap-3 text-gold-500">
+          <FileText className="h-5 w-5" />
+          <p className="text-sm font-medium">You have view-only access. Contact your admin for modifications.</p>
+        </div>
+      )}
+
       {!isFormOpen ? (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {!isCompleted && (
+          {canEdit && (
             <button onClick={() => setIsFormOpen(true)} className="btn-secondary md:col-span-3 flex items-center justify-center h-10">
               <Plus className="mr-2 h-4 w-4" /> Log New Worker Entry
             </button>
           )}
-          <div className={`relative ${isCompleted ? 'md:col-span-4' : ''}`}>
+          <div className={`relative ${!canEdit ? 'md:col-span-4' : ''}`}>
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
@@ -288,7 +296,7 @@ const WorkerModule = ({ siteId, isCompleted }) => {
                     </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                    {!isCompleted ? (
+                    {canEdit ? (
                       <div className="flex justify-end gap-3">
                         <button onClick={() => handleEdit(worker)} className="text-blue-400 hover:text-blue-300 transition-colors">
                           <Edit className="h-4 w-4" />
@@ -298,7 +306,7 @@ const WorkerModule = ({ siteId, isCompleted }) => {
                         </button>
                       </div>
                     ) : (
-                      <span className="text-gray-500 italic">Locked</span>
+                      <span className="text-gray-500 italic">{isReadOnly ? 'View Only' : 'Locked'}</span>
                     )}
                   </td>
                 </tr>

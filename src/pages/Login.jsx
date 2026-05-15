@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { HardHat, Mail, Lock, ArrowRight } from 'lucide-react';
+import { HardHat, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import toast from 'react-hot-toast';
 import logo from '../assets/cec.png';
@@ -9,6 +9,7 @@ import loginBg from '../assets/login-bg.png';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login, isAuthenticated, isLoading, error, clearError } = useAuthStore();
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const Login = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row bg-black overflow-hidden">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col md:flex-row bg-black overflow-hidden">
       {/* Left Side: Logo Branding */}
       <div
         className="hidden md:flex md:w-1/2 items-center justify-center bg-navy-950 border-r border-navy-800 relative overflow-hidden p-12"
@@ -58,7 +59,7 @@ const Login = () => {
 
       {/* Right Side: Login Form */}
       <div
-        className="flex-1 flex items-center justify-center p-6 bg-black relative overflow-y-auto"
+        className="flex-1 flex items-center justify-center p-4 md:p-8 bg-black relative overflow-y-auto"
       >
         {/* Subtle background logo on the right side too */}
         <div
@@ -107,38 +108,33 @@ const Login = () => {
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                     <Lock className="h-5 w-5" />
                   </span>
-                  {/* <input 
-                    id="password"
-                    type="password"
-                    required
-                    className="input-field pl-10"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />*/}
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
-                    className="input-field pl-10"
+                    className="input-field pl-10 pr-10"
                     placeholder="••••••••"
-
                     pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-
                     title="Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and minimum 8 characters"
-
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center justify-end">
               <div className="text-sm">
-                <a href="#" className="font-medium text-gold-500 hover:text-gold-400 transition-colors">
+                <Link to="/forgot-password" title="Forgot Password" id="forgot-password-link" className="font-medium text-gold-500 hover:text-gold-400 transition-colors">
                   Forgot your password?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -160,11 +156,17 @@ const Login = () => {
             </div>
           </form>
 
-          <div className="text-center md:text-left mt-4">
+          <div className="text-center md:text-left mt-4 flex flex-col space-y-2">
             <span className="text-sm text-gray-400">
               Don't have an account?{' '}
               <Link to="/signup" className="font-medium text-gold-500 hover:text-gold-400 transition-colors">
                 Sign up here
+              </Link>
+            </span>
+            <span className="text-sm text-gray-400">
+              Are you an Employee?{' '}
+              <Link to="/employee-auth" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                Employee Portal
               </Link>
             </span>
           </div>
