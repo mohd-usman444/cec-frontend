@@ -284,9 +284,9 @@ const GetAndPay = () => {
 
       {/* Table */}
       <div className="card p-0 overflow-hidden bg-navy-800/30 border border-navy-700/50">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-navy-900/50 text-gray-400 uppercase text-[10px] font-bold tracking-widest border-b border-navy-700/50">
+        <div className="overflow-y-auto overflow-x-auto max-h-[450px] custom-scrollbar">
+          <table className="w-full text-left relative">
+            <thead className="bg-navy-900/95 sticky top-0 z-10 text-gray-400 uppercase text-[10px] font-bold tracking-widest border-b border-navy-700/50 shadow-sm">
               <tr>
                 <th className="px-6 py-4">Transaction Details</th>
                 <th className="px-6 py-4">Date</th>

@@ -74,6 +74,22 @@ const useSiteStore = create((set, get) => ({
     }
   },
 
+  deleteSite: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      await api.delete(`/sites/${id}`);
+      set((state) => ({
+        sites: state.sites.filter((site) => site._id !== id),
+        currentSite: state.currentSite?._id === id ? null : state.currentSite,
+        isLoading: false
+      }));
+      return true;
+    } catch (error) {
+      set({ isLoading: false, error: error.response?.data?.message || 'Failed to delete site' });
+      return false;
+    }
+  },
+
   clearCurrentSite: () => set({ currentSite: null })
 }));
 
