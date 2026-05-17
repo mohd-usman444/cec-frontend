@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useAuthStore from '../store/authStore';
 import useSiteStore from '../store/siteStore';
 import CreateSiteModal from '../components/CreateSiteModal';
-import { Building2, Calendar, MapPin, ArrowRight, Wallet, Download, FileText, Trash2 } from 'lucide-react';
+import { Building2, Calendar, MapPin, ArrowRight, Wallet, Download, FileText, Trash2, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
@@ -16,7 +16,12 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [siteToDelete, setSiteToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const isEmployee = user?.role === 'employee';
+
+  const filteredSites = sites.filter(site => 
+    site.siteName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     fetchSites();
@@ -162,8 +167,20 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-heading font-bold text-white border-b border-navy-700 pb-2">Your Sites</h2>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-navy-700 pb-2">
+        <h2 className="text-xl font-heading font-bold text-white">Your Sites</h2>
+        <div className="relative w-full sm:w-64">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-500" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search site by name..."
+            className="w-full bg-navy-800 border border-navy-700 text-white text-sm rounded-lg pl-10 pr-4 py-2 focus:ring-1 focus:ring-gold-500 focus:border-gold-500 transition-colors"
+          />
+        </div>
       </div>
 
       {isLoading ? (
@@ -183,9 +200,20 @@ const Dashboard = () => {
             )}
           </div>
         </div>
+      ) : filteredSites.length === 0 ? (
+        <div className="card border-dashed border-2 border-navy-600 bg-navy-800/50">
+          <div className="text-center py-12">
+            <Search className="mx-auto h-12 w-12 text-gray-500 mb-3" />
+            <p className="text-gray-300 font-medium">No matching sites found.</p>
+            <p className="text-gray-500 text-sm mt-1 mb-4">Try a different search term.</p>
+            <button className="btn-secondary" onClick={() => setSearchQuery('')}>
+              Clear Search
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto overflow-x-hidden min-h-0 max-h-[65vh] md:max-h-[70vh] pr-2 pb-4 custom-scrollbar">
-          {sites.map((site) => (
+          {filteredSites.map((site) => (
             <div key={site._id} className="card border-t-4 border-t-gold-500 hover:scale-[1.02] transition-all group flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-4 gap-2">
@@ -194,8 +222,8 @@ const Dashboard = () => {
                   </h3>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 text-[10px] rounded-full font-bold uppercase tracking-wider ${site.status === 'active' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                        site.status === 'completed' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                          'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                      site.status === 'completed' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                        'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
                       }`}>
                       {site.status}
                     </span>
@@ -246,8 +274,8 @@ const Dashboard = () => {
               <Link
                 to={`/site/${site.slug}`}
                 className={`mt-4 w-full flex items-center justify-center py-2 px-4 rounded-md text-sm font-medium transition-all ${site.status === 'completed'
-                    ? 'bg-navy-900/50 border border-gold-500/30 text-gold-500 hover:bg-gold-500 hover:text-navy-900'
-                    : 'bg-navy-700 hover:bg-navy-600 text-white'
+                  ? 'bg-navy-900/50 border border-gold-500/30 text-gold-500 hover:bg-gold-500 hover:text-navy-900'
+                  : 'bg-navy-700 hover:bg-navy-600 text-white'
                   }`}
               >
                 {site.status === 'completed' ? 'View Reports' : 'Manage Site'} <ArrowRight className="ml-2 h-4 w-4" />

@@ -272,7 +272,7 @@ const WorkerModule = ({ siteId, isCompleted, isReadOnly }) => {
       )}
 
       {/* Table */}
-      <div className="overflow-y-auto overflow-x-hidden min-h-0 max-h-[65vh] md:max-h-[450px] rounded-lg border border-navy-700 custom-scrollbar w-full">
+      <div className="overflow-y-auto overflow-x-hidden max-h-[450px] rounded-lg border border-navy-700 custom-scrollbar w-full">
         <table className="min-w-full divide-y divide-navy-700 relative block sm:table">
           <thead className="bg-navy-900/95 sticky top-0 z-10 shadow-sm hidden sm:table-header-group">
             <tr>
