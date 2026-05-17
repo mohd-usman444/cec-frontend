@@ -217,28 +217,38 @@ const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
   } : null;
 
   return (
-    <div className="card border-t-2 border-t-navy-500">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-xl font-heading font-bold text-white">Supplier & Materials</h2>
-          <p className="text-gray-400 text-sm mt-1">Total Entries: {filteredSuppliers.length}</p>
+    <div className="card border-t-2 border-t-navy-500 w-full max-w-full overflow-hidden">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+        <div className="flex justify-between items-start w-full md:w-auto">
+          <div>
+            <h2 className="text-xl font-heading font-bold text-white">Supplier & Materials</h2>
+            <p className="text-gray-400 text-sm mt-1">Total Entries: {filteredSuppliers.length}</p>
+          </div>
+          <div className="flex md:hidden flex-col gap-2 border-l border-navy-700 pl-4">
+            <button onClick={exportToCSV} className="p-1.5 bg-navy-700 hover:bg-navy-600 rounded text-gray-300 transition-colors" title="Export to Excel">
+              <Download className="h-4 w-4" />
+            </button>
+            <button onClick={exportToPDF} className="p-1.5 bg-navy-700 hover:bg-navy-600 rounded text-gray-300 transition-colors" title="Export to PDF">
+              <FileText className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-        <div className="flex gap-4 items-center">
-          <div className="flex gap-6 text-right">
-            <div>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 text-left sm:text-right w-full sm:w-auto bg-navy-900/50 sm:bg-transparent p-4 sm:p-0 rounded-lg sm:rounded-none">
+            <div className="flex justify-between sm:block">
               <p className="text-sm text-gray-400">Total Purchase</p>
               <p className="text-xl font-bold text-white">₹{(totalSpend || 0).toFixed(2)}</p>
             </div>
-            <div>
+            <div className="flex justify-between sm:block">
               <p className="text-sm text-green-400">Total Paid</p>
               <p className="text-xl font-bold text-green-500">₹{(totalPaid || 0).toFixed(2)}</p>
             </div>
-            <div>
+            <div className="flex justify-between sm:block">
               <p className="text-sm text-red-400">Balance Due</p>
               <p className="text-xl font-bold text-red-500">₹{(totalDue || 0).toFixed(2)}</p>
             </div>
           </div>
-          <div className="flex flex-col gap-2 border-l border-navy-700 pl-4">
+          <div className="hidden md:flex flex-col gap-2 border-l border-navy-700 pl-4">
             <button onClick={exportToCSV} className="p-1.5 bg-navy-700 hover:bg-navy-600 rounded text-gray-300 transition-colors" title="Export to Excel">
               <Download className="h-4 w-4" />
             </button>
@@ -266,13 +276,13 @@ const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
       {!isFormOpen ? (
         <div className="space-y-6">
           {/* Filter & Quick Pay Header */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-navy-900/30 p-4 rounded-xl border border-navy-700/50">
-            <div className="md:col-span-4">
+          <div className="flex flex-col md:flex-row gap-4 items-end bg-navy-900/30 p-4 rounded-xl border border-navy-700/50 w-full max-w-full">
+            <div className="w-full md:w-1/3">
               <label className="block text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">Select Supplier</label>
               <select
                 value={selectedSupplier}
                 onChange={(e) => setSelectedSupplier(e.target.value)}
-                className="input-field h-10 text-sm"
+                className="input-field h-10 text-sm w-full"
               >
                 {supplierNames.map(name => (
                   <option key={name} value={name}>{name}</option>
@@ -281,29 +291,29 @@ const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
             </div>
 
             {selectedSupplier !== 'All' && selectedSupplierSummary?.due > 0 && canEdit ? (
-              <div className="md:col-span-5 flex items-end gap-2 border-l border-navy-700 pl-4">
-                <div className="flex-1">
+              <div className="w-full md:w-5/12 flex flex-col sm:flex-row items-end gap-2 md:border-l border-navy-700 md:pl-4">
+                <div className="flex-1 w-full">
                   <label className="block text-[10px] uppercase tracking-widest text-gold-500 font-bold mb-2">Quick Pay towards Due</label>
                   <input
                     type="number"
                     placeholder="Enter amount..."
                     value={quickPayAmount}
                     onChange={(e) => setQuickPayAmount(e.target.value)}
-                    className="input-field h-10 text-sm border-gold-500/30 focus:border-gold-500"
+                    className="input-field h-10 text-sm border-gold-500/30 focus:border-gold-500 w-full"
                   />
                 </div>
                 <button
                   onClick={handleQuickPay}
-                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 font-bold py-2 px-4 rounded-lg h-10 transition-all active:scale-95 text-sm"
+                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 font-bold py-2 px-4 rounded-lg h-10 transition-all active:scale-95 text-sm w-full sm:w-auto mt-2 sm:mt-0"
                 >
                   Pay Now
                 </button>
               </div>
             ) : (
-              <div className="md:col-span-5"></div>
+              <div className="hidden md:block md:w-5/12"></div>
             )}
 
-            <div className="md:col-span-3 flex justify-end">
+            <div className="w-full md:w-1/4 flex justify-end">
               {canEdit && (
                 <button onClick={() => setIsFormOpen(true)} className="btn-secondary h-10 w-full flex items-center justify-center">
                   <Plus className="mr-2 h-4 w-4" /> Log Purchase
@@ -369,9 +379,9 @@ const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
               />
             </div>
           </div>
-          <div className="flex justify-end gap-2 mt-4">
-            <button type="button" onClick={resetForm} className="btn-secondary text-sm">Cancel</button>
-            <button type="submit" className="btn-primary text-sm" disabled={isLoading}>
+          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-4">
+            <button type="button" onClick={resetForm} className="btn-secondary text-sm w-full sm:w-auto">Cancel</button>
+            <button type="submit" className="btn-primary text-sm w-full sm:w-auto" disabled={isLoading}>
               {isLoading ? 'Saving...' : editingId ? 'Update Purchase' : 'Save Purchase'}
             </button>
           </div>
@@ -379,9 +389,9 @@ const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
       )}
 
       {/* Table */}
-      <div className="overflow-y-auto overflow-x-auto max-h-[450px] rounded-lg border border-navy-700 custom-scrollbar">
-        <table className="min-w-full divide-y divide-navy-700 relative">
-          <thead className="bg-navy-900/95 sticky top-0 z-10 shadow-sm">
+      <div className="overflow-y-auto overflow-x-hidden min-h-0 max-h-[65vh] md:max-h-[450px] rounded-lg border border-navy-700 custom-scrollbar w-full">
+        <table className="min-w-full divide-y divide-navy-700 relative block sm:table">
+          <thead className="bg-navy-900/95 sticky top-0 z-10 shadow-sm hidden sm:table-header-group">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Supplier & Material</th>
@@ -392,59 +402,76 @@ const SupplierModule = ({ siteId, isCompleted, isReadOnly }) => {
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-navy-800 divide-y divide-navy-700">
+          <tbody className="bg-navy-800 divide-y divide-navy-700 block sm:table-row-group">
             {isLoading && (suppliers || []).length === 0 ? (
-              <tr><td colSpan="7" className="px-4 py-8 text-center text-gray-400">Loading...</td></tr>
+              <tr className="block sm:table-row"><td colSpan="7" className="px-4 py-8 text-center text-gray-400 block sm:table-cell">Loading...</td></tr>
             ) : filteredSuppliers.length === 0 ? (
-              <tr><td colSpan="7" className="px-4 py-8 text-center text-gray-400">No material purchases logged yet.</td></tr>
+              <tr className="block sm:table-row"><td colSpan="7" className="px-4 py-8 text-center text-gray-400 block sm:table-cell">No material purchases logged yet.</td></tr>
             ) : (
               filteredSuppliers.map((supplier) => (
-                <tr key={supplier._id} className="hover:bg-navy-700/50 transition-colors">
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
-                    {supplier.unit === 'Payment'
-                      ? new Date(supplier.createdAt || supplier.dateOfPurchase).toLocaleString('en-GB')
-                      : new Date(supplier.dateOfPurchase).toLocaleDateString('en-GB')}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{supplier.supplierName}</div>
-                    <div className={`text-xs ${supplier.unit === 'Payment' ? 'text-gold-500 font-bold' : 'text-gray-400'}`}>
-                      {supplier.materialName}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
-                    {supplier.unit === 'Payment' ? (
-                      <span className="text-gray-500">-</span>
-                    ) : (
-                      <>{supplier.quantity} {supplier.unit} &times; ₹{supplier.ratePerUnit}</>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-white">
-                    {supplier.unit === 'Payment' ? (
-                      <span className="text-gray-500">-</span>
-                    ) : (
-                      <>₹{(supplier.totalAmount || 0).toFixed(2)}</>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-green-400">
-                    ₹{(supplier.amountPaid || 0).toFixed(2)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`text-sm font-medium ${(supplier.balanceDue || 0) > 0 ? 'text-red-400' : 'text-green-400'}`}>
-                      ₹{(supplier.balanceDue || 0).toFixed(2)}
-                    </span>
-                    <div className="text-xs text-gray-500">
+                <tr key={supplier._id} className="hover:bg-navy-700/50 transition-colors block sm:table-row border-b border-navy-700 sm:border-none p-4 sm:p-0 mb-4 sm:mb-0 bg-navy-800 sm:bg-transparent rounded-lg sm:rounded-none">
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-sm text-gray-300 flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Date:</span>
+                    <span>
                       {supplier.unit === 'Payment'
-                        ? ((supplier.balanceDue || 0) <= 0 ? 'Paid' : 'Partial')
-                        : (supplier.paymentStatus || 'Pending')}
+                        ? new Date(supplier.createdAt || supplier.dateOfPurchase).toLocaleString('en-GB')
+                        : new Date(supplier.dateOfPurchase).toLocaleDateString('en-GB')}
+                    </span>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap flex justify-between sm:table-cell border-t border-navy-700/50 sm:border-none mt-2 sm:mt-0 pt-2 sm:pt-3">
+                    <span className="sm:hidden font-bold text-gray-400">Supplier:</span>
+                    <div className="text-right sm:text-left">
+                      <div className="text-sm font-medium text-white">{supplier.supplierName}</div>
+                      <div className={`text-xs ${supplier.unit === 'Payment' ? 'text-gold-500 font-bold' : 'text-gray-400'}`}>
+                        {supplier.materialName}
+                      </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-sm text-gray-300 flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Qty x Rate:</span>
+                    <span>
+                      {supplier.unit === 'Payment' ? (
+                        <span className="text-gray-500">-</span>
+                      ) : (
+                        <>{supplier.quantity} {supplier.unit} &times; ₹{supplier.ratePerUnit}</>
+                      )}
+                    </span>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-sm font-bold text-white flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Total:</span>
+                    <span>
+                      {supplier.unit === 'Payment' ? (
+                        <span className="text-gray-500">-</span>
+                      ) : (
+                        <>₹{(supplier.totalAmount || 0).toFixed(2)}</>
+                      )}
+                    </span>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-sm font-bold text-green-400 flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Paid:</span>
+                    <span>₹{(supplier.amountPaid || 0).toFixed(2)}</span>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Due:</span>
+                    <div className="text-right sm:text-left">
+                      <span className={`text-sm font-medium ${(supplier.balanceDue || 0) > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                        ₹{(supplier.balanceDue || 0).toFixed(2)}
+                      </span>
+                      <div className="text-xs text-gray-500">
+                        {supplier.unit === 'Payment'
+                          ? ((supplier.balanceDue || 0) <= 0 ? 'Paid' : 'Partial')
+                          : (supplier.paymentStatus || 'Pending')}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-right text-sm font-medium flex justify-between sm:table-cell border-t border-navy-700/50 sm:border-none mt-2 sm:mt-0 pt-2 sm:pt-3">
+                    <span className="sm:hidden font-bold text-gray-400">Actions:</span>
                     {canEdit ? (
                       <div className="flex justify-end gap-3">
-                        <button onClick={() => handleEdit(supplier)} className="text-blue-400 hover:text-blue-300 transition-colors">
+                        <button onClick={() => handleEdit(supplier)} className="text-blue-400 hover:text-blue-300 transition-colors p-2 sm:p-0">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button onClick={() => handleDelete(supplier._id)} className="text-red-400 hover:text-red-300 transition-colors">
+                        <button onClick={() => handleDelete(supplier._id)} className="text-red-400 hover:text-red-300 transition-colors p-2 sm:p-0">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>

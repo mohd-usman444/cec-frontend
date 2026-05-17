@@ -106,7 +106,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
         <div>
           <h1 className="text-3xl font-heading font-bold text-white tracking-wide">Dashboard</h1>
@@ -184,7 +184,7 @@ const Dashboard = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto pr-2 pb-4 custom-scrollbar" style={{ maxHeight: '70vh' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto overflow-x-hidden min-h-0 max-h-[65vh] md:max-h-[70vh] pr-2 pb-4 custom-scrollbar">
           {sites.map((site) => (
             <div key={site._id} className="card border-t-4 border-t-gold-500 hover:scale-[1.02] transition-all group flex flex-col justify-between">
               <div>

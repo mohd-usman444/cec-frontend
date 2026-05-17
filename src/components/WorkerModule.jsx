@@ -152,18 +152,28 @@ const WorkerModule = ({ siteId, isCompleted, isReadOnly }) => {
   const totalSpend = workers.reduce((sum, w) => sum + w.totalAmount, 0);
 
   return (
-    <div className="card border-t-2 border-t-gold-500">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-xl font-heading font-bold text-white">Worker Expenses</h2>
-          <p className="text-gray-400 text-sm mt-1">Total Workers Logged: {filteredWorkers.length}</p>
-        </div>
-        <div className="text-right flex flex-col items-end gap-2">
+    <div className="card border-t-2 border-t-gold-500 w-full max-w-full overflow-hidden">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+        <div className="flex justify-between items-start w-full md:w-auto">
           <div>
+            <h2 className="text-xl font-heading font-bold text-white">Worker Expenses</h2>
+            <p className="text-gray-400 text-sm mt-1">Total Workers Logged: {filteredWorkers.length}</p>
+          </div>
+          <div className="flex md:hidden gap-2">
+            <button onClick={exportToCSV} className="p-1.5 bg-navy-700 hover:bg-navy-600 rounded text-gray-300 transition-colors h-fit" title="Export to Excel">
+              <Download className="h-4 w-4" />
+            </button>
+            <button onClick={exportToPDF} className="p-1.5 bg-navy-700 hover:bg-navy-600 rounded text-gray-300 transition-colors h-fit" title="Export to PDF">
+              <FileText className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full md:w-auto">
+          <div className="flex justify-between sm:block w-full sm:w-auto bg-navy-900/50 sm:bg-transparent p-4 sm:p-0 rounded-lg sm:rounded-none">
             <p className="text-sm text-gray-400">Total Spend</p>
             <p className="text-2xl font-bold text-gold-500">₹{totalSpend.toFixed(2)}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="hidden md:flex gap-2">
             <button onClick={exportToCSV} className="p-1.5 bg-navy-700 hover:bg-navy-600 rounded text-gray-300 transition-colors" title="Export to Excel">
               <Download className="h-4 w-4" />
             </button>
@@ -252,9 +262,9 @@ const WorkerModule = ({ siteId, isCompleted, isReadOnly }) => {
               />
             </div>
           </div>
-          <div className="flex justify-end gap-2 mt-4">
-            <button type="button" onClick={resetForm} className="btn-secondary text-sm">Cancel</button>
-            <button type="submit" className="btn-primary text-sm" disabled={isLoading}>
+          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-4">
+            <button type="button" onClick={resetForm} className="btn-secondary text-sm w-full sm:w-auto">Cancel</button>
+            <button type="submit" className="btn-primary text-sm w-full sm:w-auto" disabled={isLoading}>
               {isLoading ? 'Saving...' : editingId ? 'Update Entry' : 'Save Entry'}
             </button>
           </div>
@@ -262,9 +272,9 @@ const WorkerModule = ({ siteId, isCompleted, isReadOnly }) => {
       )}
 
       {/* Table */}
-      <div className="overflow-y-auto overflow-x-auto max-h-[450px] rounded-lg border border-navy-700 custom-scrollbar">
-        <table className="min-w-full divide-y divide-navy-700 relative">
-          <thead className="bg-navy-900/95 sticky top-0 z-10 shadow-sm">
+      <div className="overflow-y-auto overflow-x-hidden min-h-0 max-h-[65vh] md:max-h-[450px] rounded-lg border border-navy-700 custom-scrollbar w-full">
+        <table className="min-w-full divide-y divide-navy-700 relative block sm:table">
+          <thead className="bg-navy-900/95 sticky top-0 z-10 shadow-sm hidden sm:table-header-group">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Worker</th>
@@ -273,35 +283,46 @@ const WorkerModule = ({ siteId, isCompleted, isReadOnly }) => {
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-navy-800 divide-y divide-navy-700">
+          <tbody className="bg-navy-800 divide-y divide-navy-700 block sm:table-row-group">
             {isLoading && workers.length === 0 ? (
-              <tr><td colSpan="6" className="px-4 py-8 text-center text-gray-400">Loading...</td></tr>
+              <tr className="block sm:table-row"><td colSpan="6" className="px-4 py-8 text-center text-gray-400 block sm:table-cell">Loading...</td></tr>
             ) : filteredWorkers.length === 0 ? (
-              <tr><td colSpan="6" className="px-4 py-8 text-center text-gray-400">No worker entries found.</td></tr>
+              <tr className="block sm:table-row"><td colSpan="6" className="px-4 py-8 text-center text-gray-400 block sm:table-cell">No worker entries found.</td></tr>
             ) : (
               filteredWorkers.map((worker) => (
-                <tr key={worker._id} className="hover:bg-navy-700/50 transition-colors">
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">{new Date(worker.dateOfPayment).toLocaleDateString('en-GB')}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{worker.workerName}</div>
-                    <div className="text-xs text-gray-400">{worker.role}</div>
+                <tr key={worker._id} className="hover:bg-navy-700/50 transition-colors block sm:table-row border-b border-navy-700 sm:border-none p-4 sm:p-0 mb-4 sm:mb-0 bg-navy-800 sm:bg-transparent rounded-lg sm:rounded-none">
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-sm text-gray-300 flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Date:</span>
+                    <span>{new Date(worker.dateOfPayment).toLocaleDateString('en-GB')}</span>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-white">
-                    ₹{worker.totalAmount.toFixed(2)}
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap flex justify-between sm:table-cell border-t border-navy-700/50 sm:border-none mt-2 sm:mt-0 pt-2 sm:pt-3">
+                    <span className="sm:hidden font-bold text-gray-400">Worker:</span>
+                    <div className="text-right sm:text-left">
+                      <div className="text-sm font-medium text-white">{worker.workerName}</div>
+                      <div className="text-xs text-gray-400">{worker.role}</div>
+                    </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${worker.paymentMode === 'Pending' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20'
-                      }`}>
-                      {worker.paymentMode}
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-sm font-bold text-white flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Money Spend:</span>
+                    <span>₹{worker.totalAmount.toFixed(2)}</span>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap flex justify-between sm:table-cell">
+                    <span className="sm:hidden font-bold text-gray-400">Status:</span>
+                    <span>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${worker.paymentMode === 'Pending' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20'
+                        }`}>
+                        {worker.paymentMode}
+                      </span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-right text-sm font-medium flex justify-between sm:table-cell border-t border-navy-700/50 sm:border-none mt-2 sm:mt-0 pt-2 sm:pt-3">
+                    <span className="sm:hidden font-bold text-gray-400">Actions:</span>
                     {canEdit ? (
                       <div className="flex justify-end gap-3">
-                        <button onClick={() => handleEdit(worker)} className="text-blue-400 hover:text-blue-300 transition-colors">
+                        <button onClick={() => handleEdit(worker)} className="text-blue-400 hover:text-blue-300 transition-colors p-2 sm:p-0">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button onClick={() => handleDelete(worker._id)} className="text-red-400 hover:text-red-300 transition-colors">
+                        <button onClick={() => handleDelete(worker._id)} className="text-red-400 hover:text-red-300 transition-colors p-2 sm:p-0">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>

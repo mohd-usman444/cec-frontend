@@ -55,7 +55,7 @@ const SiteDetail = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden w-full">
       {/* Header section */}
       <div className="mb-6">
         <Link to="/" className="inline-flex items-center text-sm text-gray-400 hover:text-gold-500 transition-colors mb-4">
@@ -91,10 +91,10 @@ const SiteDetail = () => {
             )}
           </div>
           {!isEmployee && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full md:w-auto">
               <button
                 onClick={handleToggleStatus}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg ${currentSite.status === 'completed'
+                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg w-full md:w-auto ${currentSite.status === 'completed'
                   ? 'bg-navy-800 text-gold-500 border border-gold-500/30 hover:bg-navy-700'
                   : 'bg-gold-500 text-navy-900 hover:bg-gold-400'
                   }`}
@@ -115,8 +115,8 @@ const SiteDetail = () => {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-navy-700 mb-6">
-        <nav className="-mb-px flex space-x-8 overflow-x-auto">
+      <div className="border-b border-navy-700 mb-6 overflow-hidden">
+        <nav className="-mb-px flex space-x-8 overflow-x-auto custom-scrollbar pb-2 scroll-smooth w-full">
           {tabs.map((tab) => (
             <button
               key={tab.id}

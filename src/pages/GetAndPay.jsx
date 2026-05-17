@@ -180,7 +180,7 @@ const GetAndPay = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
         <div>
@@ -283,10 +283,10 @@ const GetAndPay = () => {
       </div>
 
       {/* Table */}
-      <div className="card p-0 overflow-hidden bg-navy-800/30 border border-navy-700/50">
-        <div className="overflow-y-auto overflow-x-auto max-h-[450px] custom-scrollbar">
-          <table className="w-full text-left relative">
-            <thead className="bg-navy-900/95 sticky top-0 z-10 text-gray-400 uppercase text-[10px] font-bold tracking-widest border-b border-navy-700/50 shadow-sm">
+      <div className="card p-0 overflow-hidden bg-navy-800/30 border border-navy-700/50 w-full max-w-full min-h-0">
+        <div className="overflow-y-auto overflow-x-hidden min-h-0 max-h-[65vh] md:max-h-[450px] custom-scrollbar w-full">
+          <table className="w-full text-left relative block sm:table">
+            <thead className="bg-navy-900/95 sticky top-0 z-10 text-gray-400 uppercase text-[10px] font-bold tracking-widest border-b border-navy-700/50 shadow-sm hidden sm:table-header-group">
               <tr>
                 <th className="px-6 py-4">Transaction Details</th>
                 <th className="px-6 py-4">Date</th>
@@ -295,45 +295,51 @@ const GetAndPay = () => {
                 {!isEmployee && <th className="px-6 py-4 text-center">Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-navy-700/50">
+            <tbody className="divide-y divide-navy-700/50 block sm:table-row-group">
               {isLoading && payments.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center">
+                <tr className="block sm:table-row">
+                  <td colSpan="5" className="px-6 py-12 text-center block sm:table-cell">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gold-500 mx-auto"></div>
                   </td>
                 </tr>
               ) : filteredPayments.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                <tr className="block sm:table-row">
+                  <td colSpan="5" className="px-6 py-12 text-center text-gray-500 block sm:table-cell">
                     No transactions found.
                   </td>
                 </tr>
               ) : (
                 filteredPayments.map((p) => (
-                  <tr key={p._id} className="hover:bg-navy-700/20 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${p.type === 'Get' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                          {p.type === 'Get' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                        </div>
-                        <div>
-                          <p className="text-white font-medium">{p.name}</p>
-                          <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">{p.reason}</p>
+                  <tr key={p._id} className="hover:bg-navy-700/20 transition-colors group block sm:table-row border-b border-navy-700 sm:border-none p-4 sm:p-0 mb-4 sm:mb-0 bg-navy-800 sm:bg-transparent rounded-lg sm:rounded-none">
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 block sm:table-cell">
+                      <div className="flex items-center justify-between sm:justify-start gap-3">
+                        <span className="sm:hidden font-bold text-gray-400 text-xs uppercase">Details:</span>
+                        <div className="flex items-center gap-3 text-right sm:text-left">
+                          <div className={`p-2 rounded-lg ${p.type === 'Get' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                            {p.type === 'Get' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+                          </div>
+                          <div>
+                            <p className="text-white font-medium">{p.name}</p>
+                            <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">{p.reason}</p>
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-400">
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 text-sm text-gray-400 flex justify-between sm:table-cell">
+                      <span className="sm:hidden font-bold text-gray-400 text-xs uppercase">Date:</span>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-3.5 w-3.5" />
                         {new Date(p.date).toLocaleDateString('en-GB')}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 text-right flex justify-between sm:table-cell">
+                      <span className="sm:hidden font-bold text-gray-400 text-xs uppercase">Amount:</span>
                       <p className={`font-bold ${p.type === 'Get' ? 'text-green-400' : 'text-red-400'}`}>
                         {p.type === 'Get' ? '+' : '-'}{formatCurrency(p.amount)}
                       </p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 flex justify-between sm:table-cell">
+                      <span className="sm:hidden font-bold text-gray-400 text-xs uppercase">Type:</span>
                       <div className="flex items-center gap-2">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${p.action === 'Online' ? 'border-blue-500/30 text-blue-400 bg-blue-500/5' : 'border-gold-500/30 text-gold-500 bg-gold-500/5'
                           }`}>
@@ -342,17 +348,18 @@ const GetAndPay = () => {
                       </div>
                     </td>
                     {!isEmployee && (
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <td className="px-2 sm:px-6 py-2 sm:py-4 flex justify-between sm:table-cell border-t border-navy-700/50 sm:border-none mt-2 sm:mt-0 pt-2 sm:pt-4">
+                        <span className="sm:hidden font-bold text-gray-400 text-xs uppercase">Actions:</span>
+                        <div className="flex justify-end sm:justify-center items-center gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleOpenModal(p)}
-                            className="p-1.5 text-gray-400 hover:text-gold-500 hover:bg-navy-700 rounded transition-all"
+                            className="p-2 sm:p-1.5 text-gray-400 hover:text-gold-500 hover:bg-navy-700 rounded transition-all"
                           >
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(p._id)}
-                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-navy-700 rounded transition-all"
+                            className="p-2 sm:p-1.5 text-gray-400 hover:text-red-500 hover:bg-navy-700 rounded transition-all"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>

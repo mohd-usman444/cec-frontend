@@ -22,9 +22,9 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2 group">
-              <img src={logo} alt="Logo" className="h-10 w-auto group-hover:scale-110 transition-transform" />
-              <span className="font-heading text-xl font-bold tracking-wider text-white">
-                CHAND ELITE <span className="text-gold-500">CONSTRUCTIONS</span>
+              <img src={logo} alt="Logo" className="h-8 sm:h-10 w-auto group-hover:scale-110 transition-transform shrink-0" />
+              <span className="font-heading text-sm sm:text-xl font-bold tracking-wider text-white leading-tight">
+                CHAND ELITE <br className="sm:hidden" /><span className="text-gold-500">CONSTRUCTIONS</span>
               </span>
             </Link>
           </div>
