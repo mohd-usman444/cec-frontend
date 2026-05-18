@@ -38,14 +38,16 @@ const EmployeeAuth = () => {
     e.preventDefault();
     
     if (isLogin) {
-      if (!formData.email || !formData.password) {
+      if (!formData.companyName || !formData.email || !formData.password) {
         toast.error('Please fill in all fields');
         return;
       }
-      const success = await login(formData.email, formData.password);
+      const success = await login(formData.email, formData.password, formData.companyName);
       if (success) {
         toast.success('Employee logged in successfully!');
         navigate('/');
+      } else {
+        toast.error(useAuthStore.getState().error || 'Login failed');
       }
     } else {
       if (!formData.fullName || !formData.email || !formData.password || !formData.phoneNumber || !formData.companyName) {
@@ -57,6 +59,8 @@ const EmployeeAuth = () => {
       if (success) {
         toast.success('Employee account created successfully!');
         navigate('/');
+      } else {
+        toast.error(useAuthStore.getState().error || 'Registration failed');
       }
     }
   };
@@ -91,13 +95,13 @@ const EmployeeAuth = () => {
           {/* Toggle Tabs */}
           <div className="flex border-b border-navy-800">
             <button 
-              onClick={() => setIsLogin(true)}
+              onClick={() => { setIsLogin(true); clearError(); }}
               className={`flex-1 py-3 text-sm font-bold tracking-widest uppercase transition-all ${isLogin ? 'text-gold-500 border-b-2 border-gold-500' : 'text-gray-500 hover:text-gray-300'}`}
             >
               Sign In
             </button>
             <button 
-              onClick={() => setIsLogin(false)}
+              onClick={() => { setIsLogin(false); clearError(); }}
               className={`flex-1 py-3 text-sm font-bold tracking-widest uppercase transition-all ${!isLogin ? 'text-gold-500 border-b-2 border-gold-500' : 'text-gray-500 hover:text-gray-300'}`}
             >
               Sign Up
@@ -106,59 +110,61 @@ const EmployeeAuth = () => {
 
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             {!isLogin && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                      <UserIcon className="h-5 w-5" />
-                    </span>
-                    <input
-                      name="fullName"
-                      type="text"
-                      required
-                      className="input-field pl-10"
-                      placeholder="John Doe"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                    />
-                  </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                    <UserIcon className="h-5 w-5" />
+                  </span>
+                  <input
+                    name="fullName"
+                    type="text"
+                    required
+                    className="input-field pl-10"
+                    placeholder="John Doe"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Company Name</label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                      <Building className="h-5 w-5" />
-                    </span>
-                    <input
-                      name="companyName"
-                      type="text"
-                      required
-                      className="input-field pl-10"
-                      placeholder="Chand Elite Constructions"
-                      value={formData.companyName}
-                      onChange={handleChange}
-                    />
-                  </div>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Company Name</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                  <Building className="h-5 w-5" />
+                </span>
+                <input
+                  name="companyName"
+                  type="text"
+                  required
+                  className="input-field pl-10"
+                  placeholder="Chand Elite Constructions"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                    <Phone className="h-5 w-5" />
+                  </span>
+                  <input
+                    name="phoneNumber"
+                    type="text"
+                    required
+                    className="input-field pl-10"
+                    placeholder="+91 00000 00000"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                      <Phone className="h-5 w-5" />
-                    </span>
-                    <input
-                      name="phoneNumber"
-                      type="text"
-                      required
-                      className="input-field pl-10"
-                      placeholder="+91 00000 00000"
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </>
+              </div>
             )}
 
             <div>

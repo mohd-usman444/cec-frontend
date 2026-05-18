@@ -27,10 +27,10 @@ const useAuthStore = create((set, get) => ({
   },
 
   // Login
-  login: async (email, password) => {
+  login: async (email, password, companyName) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password, companyName });
       if (response.data.token) {
         sessionStorage.setItem('token', response.data.token);
       }
