@@ -5,6 +5,10 @@ import WorkerModule from '../components/WorkerModule';
 import SupplierModule from '../components/SupplierModule';
 import WorkerReport from '../components/WorkerReport';
 import SupplierReport from '../components/SupplierReport';
+import OtherExpenseModule from '../components/OtherExpenseModule';
+import useWorkerStore from '../store/workerStore';
+import useSupplierStore from '../store/supplierStore';
+import useOtherExpenseStore from '../store/otherExpenseStore';
 import { ArrowLeft, Building2, MapPin, Calendar as CalendarIcon, FileText, CheckCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../store/authStore';
@@ -16,11 +20,23 @@ const SiteDetail = () => {
   const [activeTab, setActiveTab] = useState('worker-spend');
   const isEmployee = user?.role === 'employee';
 
+  const { workers, fetchWorkers } = useWorkerStore();
+  const { suppliers, fetchSuppliers } = useSupplierStore();
+  const { otherExpenses, fetchOtherExpenses } = useOtherExpenseStore();
+
   useEffect(() => {
     getSiteDetails(slug);
 
     return () => useSiteStore.getState().clearCurrentSite();
   }, [slug, getSiteDetails]);
+
+  useEffect(() => {
+    if (currentSite) {
+      fetchWorkers(currentSite._id);
+      fetchSuppliers(currentSite._id);
+      fetchOtherExpenses(currentSite._id);
+    }
+  }, [currentSite, fetchWorkers, fetchSuppliers, fetchOtherExpenses]);
 
   if (isLoading || !currentSite) {
     return (
@@ -47,9 +63,15 @@ const SiteDetail = () => {
     }
   };
 
+  const totalWorkerSpend = workers.reduce((sum, w) => sum + w.totalAmount, 0);
+  const totalSupplierPaid = suppliers.reduce((sum, s) => sum + (s.amountPaid || 0), 0);
+  const totalOtherExpense = otherExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalSiteSpend = totalWorkerSpend + totalSupplierPaid + totalOtherExpense;
+
   const tabs = [
     { id: 'worker-spend', label: 'Worker Spend', icon: '👷' },
     { id: 'supplier', label: 'Supplier', icon: '🧱' },
+    { id: 'other-expense', label: 'Other Expense', icon: '🧾' },
     { id: 'worker-report', label: 'Worker Report', icon: '📊' },
     { id: 'supplier-report', label: 'Supplier Report', icon: '📋' },
   ];
@@ -81,6 +103,12 @@ const SiteDetail = () => {
                   'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
                 }`}>
                 {currentSite.status.charAt(0).toUpperCase() + currentSite.status.slice(1)}
+              </div>
+              <div className="flex items-center bg-gold-500/10 border border-gold-500/20 px-2.5 py-0.5 rounded-full">
+                <span className="text-gray-400 mr-1.5 font-medium text-[12px]">Total Site Spend:</span>
+                <span className="text-gold-500 font-bold text-[13px]">
+                  ₹{totalSiteSpend.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
             </div>
             {currentSite.description && (
@@ -140,6 +168,10 @@ const SiteDetail = () => {
 
         {activeTab === 'supplier' && (
           <SupplierModule siteId={currentSite._id} isCompleted={currentSite.status === 'completed'} isReadOnly={isEmployee} />
+        )}
+
+        {activeTab === 'other-expense' && (
+          <OtherExpenseModule siteId={currentSite._id} isCompleted={currentSite.status === 'completed'} isReadOnly={isEmployee} />
         )}
 
         {activeTab === 'worker-report' && (

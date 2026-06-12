@@ -7,6 +7,8 @@ const useSiteStore = create((set, get) => ({
   stats: {
     totalWorkerSpend: 0,
     totalSupplierSpend: 0,
+    totalSupplierPaid: 0,
+    totalOtherExpense: 0,
     totalSites: 0
   },
   isLoading: false,

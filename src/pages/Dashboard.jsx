@@ -61,7 +61,9 @@ const Dashboard = () => {
       Workers: s.workerCount || 0,
       LabourSpend: s.labourSpend || 0,
       MaterialSpend: s.materialSpend || 0,
-      TotalSpend: (s.labourSpend || 0) + (s.materialSpend || 0)
+      MaterialPaid: s.materialPaid || 0,
+      OtherExpense: s.otherExpenseSpend || 0,
+      TotalSpend: (s.labourSpend || 0) + (s.materialPaid || 0) + (s.otherExpenseSpend || 0)
     }));
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -77,13 +79,13 @@ const Dashboard = () => {
     doc.setFontSize(11);
     doc.setTextColor(100);
     doc.text(`Generated on: ${new Date().toLocaleString('en-GB')}`, 14, 30);
-    doc.text(`Total Worker Spend: INR ${stats.totalWorkerSpend} | Total Material Spend: INR ${stats.totalSupplierSpend}`, 14, 38);
+    doc.text(`Total Worker Spend: INR ${stats.totalWorkerSpend} | Total Material Spend: INR ${stats.totalSupplierSpend} | Total Other Expense: INR ${stats.totalOtherExpense || 0}`, 14, 38);
 
     let yPos = 50;
     doc.setFontSize(12);
     doc.setTextColor(0);
-    const headers = ["Site Name", "Location", "Status", "Started", "Workers", "Labour", "Material"];
-    const xPositions = [14, 60, 110, 140, 180, 210, 240];
+    const headers = ["Site Name", "Location", "Status", "Started", "Workers", "Labour", "Material Paid", "Other Exp", "Total Spend"];
+    const xPositions = [14, 50, 95, 120, 150, 170, 195, 225, 250];
 
     headers.forEach((h, i) => doc.text(h, xPositions[i], yPos));
 
@@ -97,12 +99,14 @@ const Dashboard = () => {
       }
       doc.setFontSize(10);
       doc.text(s.siteName, 14, yPos);
-      doc.text(s.siteLocation, 60, yPos);
-      doc.text(s.status, 110, yPos);
-      doc.text(new Date(s.startDate).toLocaleDateString('en-GB'), 140, yPos);
-      doc.text(`${s.workerCount || 0}`, 180, yPos);
-      doc.text(`${s.labourSpend || 0}`, 210, yPos);
-      doc.text(`${s.materialSpend || 0}`, 240, yPos);
+      doc.text(s.siteLocation, 50, yPos);
+      doc.text(s.status, 95, yPos);
+      doc.text(new Date(s.startDate).toLocaleDateString('en-GB'), 120, yPos);
+      doc.text(`${s.workerCount || 0}`, 150, yPos);
+      doc.text(`${s.labourSpend || 0}`, 170, yPos);
+      doc.text(`${s.materialPaid || 0}`, 195, yPos);
+      doc.text(`${s.otherExpenseSpend || 0}`, 225, yPos);
+      doc.text(`${(s.labourSpend || 0) + (s.materialPaid || 0) + (s.otherExpenseSpend || 0)}`, 250, yPos);
       yPos += 8;
     });
 
@@ -134,7 +138,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
         <div className="card border-l-4 border-l-gold-500">
           <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Active Projects</h3>
           <p className="text-4xl font-bold text-gold-500 mt-2">
@@ -151,6 +155,18 @@ const Dashboard = () => {
           <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Material Spend</h3>
           <p className="text-4xl font-bold text-gold-500 mt-2">{formatStats(stats.totalSupplierSpend)}</p>
           <p className="text-gray-500 text-xs mt-1">All sites combined</p>
+        </div>
+        <div className="card border-l-4 border-l-gold-500">
+          <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Other Expense</h3>
+          <p className="text-4xl font-bold text-gold-500 mt-2">{formatStats(stats.totalOtherExpense || 0)}</p>
+          <p className="text-gray-500 text-xs mt-1">All sites combined</p>
+        </div>
+        <div className="card border-l-4 border-l-gold-500">
+          <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Total Site Spend</h3>
+          <p className="text-4xl font-bold text-gold-500 mt-2">
+            {formatStats((stats.totalWorkerSpend || 0) + (stats.totalSupplierPaid || 0) + (stats.totalOtherExpense || 0))}
+          </p>
+          <p className="text-gray-500 text-xs mt-1">Labour + Material Paid + Other Exp</p>
         </div>
         <div className="card border-l-4 border-l-gold-500 hover:border-l-gold-400 transition-all group relative overflow-hidden">
           <Link to="/get-and-pay" className="absolute inset-0 z-10"></Link>
@@ -268,6 +284,11 @@ const Dashboard = () => {
                     <p className="text-white font-bold text-lg leading-none">{formatStats(site.materialSpend || 0)}</p>
                     <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Material</p>
                   </div>
+                </div>
+
+                <div className="flex justify-between items-center mt-3 pt-3 border-t border-navy-700/50 text-[11px] text-gray-400">
+                  <div>Other Exp: <span className="text-white font-semibold">{formatStats(site.otherExpenseSpend || 0)}</span></div>
+                  <div>Total Spend: <span className="text-gold-500 font-bold">{formatStats((site.labourSpend || 0) + (site.materialPaid || 0) + (site.otherExpenseSpend || 0))}</span></div>
                 </div>
               </div>
 
