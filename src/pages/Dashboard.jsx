@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const isEmployee = user?.role === 'employee';
 
-  const filteredSites = sites.filter(site => 
+  const filteredSites = sites.filter(site =>
     site.siteName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

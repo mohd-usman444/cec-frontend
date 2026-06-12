@@ -133,7 +133,7 @@ const OtherExpenseModule = ({ siteId, isCompleted, isReadOnly }) => {
       doc.text(e.itemName, 45, yPos);
       doc.text(`INR ${e.amount.toFixed(2)}`, 95, yPos);
       doc.text(e.paymentMode, 130, yPos);
-      
+
       const truncatedReason = (e.reason || '').substring(0, 20) + (e.reason && e.reason.length > 20 ? '...' : '');
       doc.text(truncatedReason || '-', 165, yPos);
       yPos += 8;

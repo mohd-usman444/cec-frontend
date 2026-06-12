@@ -69,6 +69,7 @@ const useSiteStore = create((set, get) => ({
         currentSite: state.currentSite?._id === id ? response.data : state.currentSite,
         isLoading: false
       }));
+      get().fetchStats();
       return response.data;
     } catch (error) {
       set({ isLoading: false, error: error.response?.data?.message || 'Failed to update site' });
